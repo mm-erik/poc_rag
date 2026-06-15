@@ -1,21 +1,23 @@
-import hashlib
-import math
 import os
 import re
 from typing import Optional
 from uuid import uuid4
 
 from fastapi import FastAPI
+from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from mistralai import Mistral
 from pydantic import BaseModel, Field
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qm
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "rag_poc")
-VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", "128"))
+VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", "1024"))
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "80"))
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
+MISTRAL_EMBED_MODEL = os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
 
 
 class UploadRequest(BaseModel):
@@ -33,7 +35,7 @@ class UploadResponse(BaseModel):
 class ChatRequest(BaseModel):
     userId: str = Field(..., min_length=1)
     message: str = Field(..., min_length=1)
-    filterResourceId: Optional[str] = None
+    filterResourceIds: Optional[list[str]] = None
 
 
 class ChatResponse(BaseModel):
@@ -53,6 +55,15 @@ app.add_middleware(
 )
 
 qdrant = QdrantClient(url=QDRANT_URL)
+
+mistral = Mistral(api_key=MISTRAL_API_KEY)
+
+
+def embed(texts: list[str]) -> list[list[float]]:
+    if not MISTRAL_API_KEY:
+        raise HTTPException(status_code=500, detail="MISTRAL_API_KEY is not set")
+    response = mistral.embeddings.create(model=MISTRAL_EMBED_MODEL, inputs=texts)
+    return [item.embedding for item in response.data]
 
 
 def ensure_collection() -> None:
@@ -89,26 +100,6 @@ def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVE
     return chunks
 
 
-def hash_embed(text: str, size: int = VECTOR_SIZE) -> list[float]:
-    vec = [0.0] * size
-    tokens = re.findall(r"[A-Za-z0-9_]+", text.lower())
-
-    if not tokens:
-        return vec
-
-    for token in tokens:
-        digest = hashlib.sha256(token.encode("utf-8")).digest()
-        idx = int.from_bytes(digest[:4], "big") % size
-        sign = 1.0 if (digest[4] % 2 == 0) else -1.0
-        vec[idx] += sign
-
-    norm = math.sqrt(sum(v * v for v in vec))
-    if norm > 0:
-        vec = [v / norm for v in vec]
-
-    return vec
-
-
 @app.on_event("startup")
 def startup() -> None:
     ensure_collection()
@@ -140,10 +131,14 @@ def upload_resource(req: UploadRequest) -> UploadResponse:
 
     points: list[qm.PointStruct] = []
     for idx, chunk in enumerate(chunks):
+        pass  # filled below after batch embed
+
+    vectors = embed(chunks)
+    for idx, (chunk, vector) in enumerate(zip(chunks, vectors)):
         points.append(
             qm.PointStruct(
                 id=str(uuid4()),
-                vector=hash_embed(chunk),
+                vector=vector,
                 payload={
                     "user_id": req.userId,
                     "tenant_id": req.userId,
@@ -172,11 +167,11 @@ def chat(req: ChatRequest) -> ChatResponse:
         qm.FieldCondition(key="user_id", match=qm.MatchValue(value=req.userId)),
     ]
 
-    if req.filterResourceId:
+    if req.filterResourceIds:
         filters.append(
             qm.FieldCondition(
                 key="resource_id",
-                match=qm.MatchValue(value=req.filterResourceId),
+                match=qm.MatchAny(any=req.filterResourceIds),
             )
         )
 
@@ -184,7 +179,7 @@ def chat(req: ChatRequest) -> ChatResponse:
 
     hits = qdrant.search(
         collection_name=QDRANT_COLLECTION,
-        query_vector=hash_embed(req.message),
+        query_vector=embed([req.message])[0],
         query_filter=search_filter,
         with_payload=True,
         limit=5,

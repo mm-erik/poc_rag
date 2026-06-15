@@ -13,13 +13,16 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: rag-poc-backend
+    env_file:
+      - .env
     environment:
       QDRANT_URL: http://qdrant:6333
       QDRANT_COLLECTION: rag_poc
-      VECTOR_SIZE: 128
+      VECTOR_SIZE: 1024
       CHUNK_SIZE: 500
       CHUNK_OVERLAP: 80
       CORS_ALLOW_ORIGINS: "*"
+      MISTRAL_EMBED_MODEL: mistral-embed
     depends_on:
       - qdrant
     ports:
