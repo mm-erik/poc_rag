@@ -6,6 +6,7 @@
     "backend:up": "docker compose up --build -d qdrant backend",
     "backend:down": "docker compose down",
     "backend:logs": "docker compose logs -f backend qdrant",
+    "frontend:rebuild": "docker compose up --build -d frontend",
     "stack:up": "docker compose up --build -d",
     "stack:down": "docker compose down",
     "stack:logs": "docker compose logs -f frontend backend qdrant",
