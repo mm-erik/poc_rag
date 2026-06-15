@@ -1,0 +1,39 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag-poc-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rag-poc-backend
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_COLLECTION: rag_poc
+      VECTOR_SIZE: 128
+      CHUNK_SIZE: 500
+      CHUNK_OVERLAP: 80
+      CORS_ALLOW_ORIGINS: "*"
+    depends_on:
+      - qdrant
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rag-poc-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:4173"
+
+volumes:
+  qdrant_storage:

@@ -1,0 +1,17 @@
+[project]
+name = "rag-poc-backend"
+version = "0.1.0"
+description = "Quick and dirty FastAPI backend for a local RAG PoC with Qdrant"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.116.1",
+  "qdrant-client==1.15.1",
+  "uvicorn[standard]==0.35.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = false
