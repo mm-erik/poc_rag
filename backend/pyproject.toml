@@ -6,7 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
   "fastapi==0.116.1",
   "mistralai==1.8.2",
-  "qdrant-client==1.15.1",
+  "qdrant-client[fastembed]==1.15.1",
   "uvicorn[standard]==0.35.0",
 ]
 

@@ -18,6 +18,10 @@ CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "80"))
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
 MISTRAL_EMBED_MODEL = os.getenv("MISTRAL_EMBED_MODEL", "mistral-embed")
+BM25_MODEL = os.getenv("BM25_MODEL", "Qdrant/bm25")
+BM25_LANGUAGE = os.getenv("BM25_LANGUAGE", "english")
+DENSE_VECTOR_NAME = os.getenv("DENSE_VECTOR_NAME", "text")
+SPARSE_VECTOR_NAME = os.getenv("SPARSE_VECTOR_NAME", "sparse-text")
 
 
 class UploadRequest(BaseModel):
@@ -66,6 +70,14 @@ def embed(texts: list[str]) -> list[list[float]]:
     return [item.embedding for item in response.data]
 
 
+def bm25_document(text: str) -> qm.Document:
+    return qm.Document(
+        text=text,
+        model=BM25_MODEL,
+        options={"language": BM25_LANGUAGE},
+    )
+
+
 def ensure_collection() -> None:
     try:
         exists = qdrant.collection_exists(QDRANT_COLLECTION)
@@ -75,7 +87,12 @@ def ensure_collection() -> None:
     if not exists:
         qdrant.create_collection(
             collection_name=QDRANT_COLLECTION,
-            vectors_config=qm.VectorParams(size=VECTOR_SIZE, distance=qm.Distance.COSINE),
+            vectors_config={
+                DENSE_VECTOR_NAME: qm.VectorParams(size=VECTOR_SIZE, distance=qm.Distance.COSINE)
+            },
+            sparse_vectors_config={
+                SPARSE_VECTOR_NAME: qm.SparseVectorParams(modifier=qm.Modifier.IDF)
+            },
         )
 
 
@@ -138,7 +155,10 @@ def upload_resource(req: UploadRequest) -> UploadResponse:
         points.append(
             qm.PointStruct(
                 id=str(uuid4()),
-                vector=vector,
+                vector={
+                    DENSE_VECTOR_NAME: vector,
+                    SPARSE_VECTOR_NAME: bm25_document(chunk),
+                },
                 payload={
                     "user_id": req.userId,
                     "tenant_id": req.userId,
@@ -177,13 +197,27 @@ def chat(req: ChatRequest) -> ChatResponse:
 
     search_filter = qm.Filter(must=filters)
 
-    hits = qdrant.search(
+    hits = qdrant.query_points(
         collection_name=QDRANT_COLLECTION,
-        query_vector=embed([req.message])[0],
+        prefetch=[
+            qm.Prefetch(
+                query=embed([req.message])[0],
+                using=DENSE_VECTOR_NAME,
+                filter=search_filter,
+                limit=10,
+            ),
+            qm.Prefetch(
+                query=bm25_document(req.message),
+                using=SPARSE_VECTOR_NAME,
+                filter=search_filter,
+                limit=10,
+            ),
+        ],
+        query=qm.FusionQuery(fusion=qm.Fusion.RRF),
         query_filter=search_filter,
         with_payload=True,
         limit=5,
-    )
+    ).points
 
     if not hits:
         return ChatResponse(
