@@ -75,7 +75,7 @@ services:
   tunnel-minio:
     image: cloudflare/cloudflared:latest
     container_name: rag-poc-tunnel-minio
-    command: tunnel --no-autoupdate --url http://minio:9000
+    command: tunnel --no-autoupdate --url http://minio:9001
     depends_on:
       - minio
     restart: unless-stopped
