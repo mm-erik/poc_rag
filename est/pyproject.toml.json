@@ -1,0 +1,28 @@
+[
+  {
+    "type": "CompositeElement",
+    "element_id": "1e9e859d5b33d7b55d4e7d213bff7b08",
+    "text": "[project]\n\nname = \"unstructered-tes\"\n\nversion = \"0.1.0\"\n\ndescription = \"Add your description here\"\n\nreadme = \"README.md\"\n\nrequires-python = \">=3.14\"\n\ndependencies = [\n\n\"dotenv>=0.9.9\",\n\n\"unstructured-ingest[remote]>=1.6.16\",\n\n]",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/erikwitte/Desktop/testing/poc_rag/unstructered_tes/pyproject.toml"
+        },
+        "date_created": "1781705410.534139",
+        "date_modified": "1781705629.615402",
+        "date_processed": "1781705636.518516",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filename": "pyproject.toml",
+      "filetype": "text/plain",
+      "languages": [
+        "deu"
+      ],
+      "orig_elements": "eJztV01P20AQ/SuRz8XZ7/VWAgkJju2hglOIot3Z2eCS2O56Q0sR/73rKFQEtQJ6aITkkz/meTyz771Ze3Zf4ArX2KRF7YuPk4JLikAJOKuEZgZsYNS54JmsjLNeFx8mxRqT9TbZjL8vhpNF324i4OM1LiBiPmwTUl1RTaSgpJRcUG6GDFvQuvV1qPdQiplSUSkI+43qYgvY9/swrkpJK0nVAOswruu+r9umX+zKmt0XOftQEOe0qh7mGRYR2ugXqxZsauO21s6m6yHt9LLH2E8x1jff65Rweob9TWq7acI+1c1y2rWwiHY53TR9ihtIGNEvcnDa3eX6viKkMrXrVfHwkF8U6hU2dj28vXgW30XTXbeNJvyRpt3K1s0QWdlmubFL7IcGCo+bYj6kG0ADeLbLNB+wjxku6rTCIsOe86hD0J5oFJVhBLynQThiQQAwTqX0I4+H4nFIOTmeXBVPizjKRVwVr2KWsWxPwQULygftNKtM5awmCo1jDMTI7P9kdujOxjf47qkUbnNPeVG2aiAlLcm+BC6bvBC4bGP9E/3F8MyfjM4QgiRUWqGD0sQYUNaCJlbmQc7Hgf1+5OCxh1h36VESp95P7jJRk6eB69zKvkw+2xhtqm/xbxKx4KnkwJUEaRgYC2BIMC4PDqFlwFEih9oL8pL63W7w5fz07NN5ufav3AYqJZGyTCoTBoRhnqJ3vMo6A+I4qUZSD+n7Fy23r4Jvmzpif9Tdpeud90+OeUnFG42uQp4sFSFaeVVRRUnWBwXGkCrDsbKjJg5ldI8dNh4bqLHP/M5eZ3HmFZNKGaa0k8ZWUjgrnVMh64ojG+k8pMVfNNtT/q8K3yZsbk+OSWlKc1V8ePuHHqVBUc4sY0TlMSKodMzniU8d+szCqIZ3pIbHcjfDv1/uI3czi7jOGpmfHNNSlVT9k0aMlSC8Aw4ENaNGEKiCkPmGtsqNf/3vRyPzF8if/wKY6TPW"
+    }
+  }
+]
