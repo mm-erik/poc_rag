@@ -6,6 +6,6 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "dotenv>=0.9.9",
-    "unstructured>=0.23.1",
-    "unstructured-ingest[remote]>=1.6.16",
+    "requests>=2.32.4",
+    "unstructured-client>=0.42.3",
 ]
