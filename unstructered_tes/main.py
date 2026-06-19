@@ -58,8 +58,8 @@ def run_on_demand_job(client: UnstructuredClient) -> tuple[str, list[str]]:
             "subtype": "vlm",
             "type": "partition",
             "settings": {
-                "provider": "vertexai",
-                "model": "gemini-2.0-flash-001",
+                "provider": "anthropic",
+                "model": "claude-sonnet-4-5-20250929",
                 "is_dynamic": False,
                 "allow_fast": True,
             },
