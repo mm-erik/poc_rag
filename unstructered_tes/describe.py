@@ -98,7 +98,7 @@ def enrich_elements(elements: list[dict]) -> list[dict]:
                 print(f"    Warning: {exc}")
             time.sleep(RATE_LIMIT_SLEEP)
 
-        elif element_type == "Table":
+        elif element_type == "TableChunk":
             text_as_html = metadata.get("text_as_html")
             if not text_as_html:
                 continue
