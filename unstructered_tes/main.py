@@ -81,8 +81,24 @@ def run_on_demand_job(client: UnstructuredClient) -> tuple[str, list[str]]:
             "settings": {},
         }
 
+        chunk_by_title_chunker_workflow_node = {
+            "name": "Chunker",
+            "subtype": "chunk_by_title",
+            "type": "chunk",
+            "settings": {
+                "multipage_sections": True,
+                "include_orig_elements": True,
+                "new_after_n_chars": None,
+                "max_characters": None,
+                "overlap": None,
+                "overlap_all": False,
+                "isolate_table": True,
+            }
+        }
+
         job_nodes = [
             vlm_partitioner_node,
+            chunk_by_title_chunker_workflow_node,
             #image_description_enrichment_node,
             #table_description_enrichment_node,
         ]
