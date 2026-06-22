@@ -9,6 +9,8 @@ from unstructured_client import UnstructuredClient
 from unstructured_client.models.operations import CreateJobRequest, DownloadJobOutputRequest
 from unstructured_client.models.shared import BodyCreateJob, InputFiles
 
+from describe import enrich_elements
+
 dotenv.load_dotenv()
 
 DEFAULT_API_URL = "https://platform.unstructuredapp.io/api/v1"
@@ -81,8 +83,8 @@ def run_on_demand_job(client: UnstructuredClient) -> tuple[str, list[str]]:
 
         job_nodes = [
             vlm_partitioner_node,
-            image_description_enrichment_node,
-            table_description_enrichment_node,
+            #image_description_enrichment_node,
+            #table_description_enrichment_node,
         ]
 
         response = client.jobs.create_job(
@@ -112,15 +114,14 @@ def poll_job_until_completed(client: UnstructuredClient, job_id: str) -> None:
     while True:
         response = client.jobs.get_job(request={"job_id": job_id})
         status = response.job_information.status
-        print(f"Job status: {status}")
-
         if status == "COMPLETED":
             return
 
+        print(f"Job status: {status}, polling again in 10 seconds...")
+        time.sleep(10)
+
         if status in {"FAILED", "STOPPED"}:
             raise RuntimeError(f"Job did not complete successfully: {status}")
-
-        time.sleep(10)
 
 
 def _remove_image_base64_inplace(elements: list[dict]) -> None:
@@ -145,6 +146,8 @@ def download_outputs(client: UnstructuredClient, job_id: str, input_file_ids: li
 
         payload = response.any
         if isinstance(payload, list):
+            print(f"Enriching elements for file_id: {file_id}")
+            enrich_elements(payload)
             _remove_image_base64_inplace(payload)
 
         output_path = output_dir / f"{file_id}.json"
