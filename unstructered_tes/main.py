@@ -81,21 +81,25 @@ def run_on_demand_job(client: UnstructuredClient) -> tuple[str, list[str]]:
             "settings": {},
         }
 
+        # Target: ~400 tokens per chunk for optimal chatbot context (1 token ≈ 4 chars)
+        # - new_after_n_chars (1500): Soft cap (~375 tokens). System naturally stops here if a layout boundary is found.
+        # - max_characters (2000): Hard cap (~500 tokens). Acts as a buffer to keep long, cohesive paragraphs intact.
+        # - combine_under_n_chars (500): Glues tiny text fragments together to prevent contextless "micro-chunks".
+        # - isolate_table (True): Forces tables into clean, isolated chunks—ideal for our local LLM enrichment step.
         chunk_by_title_chunker_workflow_node = {
             "name": "Chunker",
             "subtype": "chunk_by_title",
             "type": "chunk",
             "settings": {
                 "multipage_sections": True,
-                "include_orig_elements": True,
-                "new_after_n_chars": None,
-                "max_characters": None,
-                "overlap": None,
+                "combine_under_n_chars": 500,
+                "new_after_n_chars": 1500,
+                "max_characters": 2000,
+                "overlap": 200,
                 "overlap_all": False,
                 "isolate_table": True,
             }
         }
-
         job_nodes = [
             vlm_partitioner_node,
             chunk_by_title_chunker_workflow_node,
