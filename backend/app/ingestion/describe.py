@@ -45,7 +45,8 @@ def describe_image(image_base64: str, mime_type: str = "image/jpeg") -> str:
                         "type": "text",
                         "text": (
                             "Describe the content of this image concisely. "
-                            "Focus on the key information it conveys."
+                            "Focus on the key information it conveys. "
+                            "Write the description in German."
                         ),
                     },
                 ],
@@ -65,7 +66,7 @@ def describe_table(text_as_html: str) -> str:
                 "content": (
                     "Summarize the following HTML table concisely. "
                     "Describe what it shows and highlight the key data points:\n\n"
-                    + text_as_html
+                    + text_as_html + ". Write the summary in German."
                 ),
             }
         ],
