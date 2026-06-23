@@ -1,10 +1,10 @@
 import os
 import time
-import dotenv
 
 import requests
+from dotenv import load_dotenv
 
-dotenv.load_dotenv()
+load_dotenv()
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 MISTRAL_CHAT_URL = "https://api.mistral.ai/v1/chat/completions"

@@ -9,6 +9,14 @@ This backend is a minimal FastAPI service that:
 
 Dependency management is handled with uv via pyproject.toml.
 
+## Ingestion pipeline
+
+Run from the `backend/` directory (reads from `../input/`, writes to `../est/`):
+
+```
+uv run -m app.ingestion.main
+```
+
 ## Endpoints
 
 - GET /health

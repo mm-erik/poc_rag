@@ -22,28 +22,24 @@ const STORAGE_KEYS = {
 };
 
 const UPLOAD_STEPS = [
-  "Uploading Text...",
+  "Uploading File...",
   "Chunking...",
-  "Generating OpenAI Embeddings...",
+  "Generating Mistral Embeddings...",
   "Storing in Qdrant...",
   "Success!",
 ];
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function uploadResource(userId, title, text) {
-  const payload = {
-    userId,
-    title,
-    text,
-  };
+async function uploadResource(userId, title, file) {
+  const form = new FormData();
+  form.append("userId", userId);
+  form.append("title", title);
+  form.append("file", file);
 
   const response = await fetch(`${BACKEND_URL}/upload`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
+    body: form,
   });
 
   if (!response.ok) {
@@ -94,7 +90,7 @@ function RagPocApp() {
     readJsonStorage(STORAGE_KEYS.resources, [])
   );
   const [titleInput, setTitleInput] = useState("");
-  const [textInput, setTextInput] = useState("");
+  const [fileInput, setFileInput] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadStepIndex, setUploadStepIndex] = useState(-1);
   const [uploadError, setUploadError] = useState("");
@@ -283,9 +279,8 @@ function RagPocApp() {
     event.preventDefault();
 
     const title = titleInput.trim();
-    const text = textInput.trim();
 
-    if (!title || !text || uploading || !activeUserId) {
+    if (!title || !fileInput || uploading || !activeUserId) {
       return;
     }
 
@@ -298,7 +293,7 @@ function RagPocApp() {
         await wait(700);
       }
 
-      const apiResponse = await uploadResource(activeUserId, title, text);
+      const apiResponse = await uploadResource(activeUserId, title, fileInput);
 
       setUploadStepIndex(UPLOAD_STEPS.length - 1);
       await wait(600);
@@ -312,7 +307,7 @@ function RagPocApp() {
         {
           id: String(resourceId),
           title,
-          textPreview: text.slice(0, 120),
+          textPreview: fileInput.name,
           userId: activeUserId,
           tenantId: activeUserId,
           uploadedAt: new Date().toISOString(),
@@ -320,7 +315,7 @@ function RagPocApp() {
         ...prev,
       ]);
       setTitleInput("");
-      setTextInput("");
+      setFileInput(null);
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Upload failed");
     } finally {
@@ -531,14 +526,20 @@ function RagPocApp() {
                     placeholder="Resource title"
                     required
                   />
-                  <textarea
-                    value={textInput}
-                    onChange={(e) => setTextInput(e.target.value)}
-                    rows={5}
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none ring-indigo-500 transition focus:ring"
-                    placeholder="Paste document text or knowledge snippet here..."
-                    required
-                  />
+                  <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500 transition hover:border-indigo-400 hover:bg-indigo-50">
+                    <Upload className="mb-2 h-6 w-6 text-slate-400" />
+                    {fileInput ? (
+                      <span className="font-medium text-slate-700">{fileInput.name}</span>
+                    ) : (
+                      <span>Click to select a file, or drag &amp; drop</span>
+                    )}
+                    <input
+                      type="file"
+                      className="sr-only"
+                      onChange={(e) => setFileInput(e.target.files?.[0] ?? null)}
+                      required
+                    />
+                  </label>
                   <button
                     type="submit"
                     disabled={uploading}
@@ -582,7 +583,7 @@ function RagPocApp() {
                     {activeUserResources.map((resource) => (
                       <div key={resource.id} className="rounded-xl border border-slate-200 p-3">
                         <p className="text-sm font-semibold text-slate-800">{resource.title}</p>
-                        <p className="mt-1 text-xs text-slate-500">{resource.textPreview}…</p>
+                        <p className="mt-1 text-xs text-slate-500">{resource.textPreview}</p>
                         <div className="mt-2 flex flex-wrap gap-2 text-xs">
                           <span className="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">user_id: {resource.userId}</span>
                           <span className="rounded bg-indigo-50 px-2 py-0.5 text-indigo-700">id: {resource.id.slice(0, 8)}…</span>
