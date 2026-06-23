@@ -85,7 +85,7 @@ async def upload_resource(
     chunks = ingest(raw, file.filename, file.content_type)
 
     if not chunks:
-        return UploadResponse(chunksInserted=0, message="No chunks created")
+        return UploadResponse(resourceId="", chunksInserted=0, message="No chunks created")
 
     resource_id, chunk_count = insert_points(chunks, userId, title)
 

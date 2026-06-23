@@ -1,0 +1,176 @@
+[
+  {
+    "type": "CompositeElement",
+    "element_id": "77a7ffbeefca8eeefc76f007b77b3dcc",
+    "text": "INTERNE TECHNISCHE DOKUMENTATION \u2014 RAG INGESTION PIPELINE Benchmark-Bericht: Retrieval-Performance & Infrastrukturkosten\n\nHinweis f\u00fcr das RAG-Parsing: Dieses Dokument dient als synthetischer Testdatensatz zur Validierung von Tabellen-Extraktionsalgorithmen (z. B. Unstructured, LlamaParse) und LLM-basierten Tabellenbeschreibungen innerhalb der Daten-Ingestion-Pipeline.\n\n1. Evaluierung der Retrieval-Performance\n\nF\u00fcr die Optimierung unseres RAG-Systems (Retrieval-Augmented Generation) wurden verschiedene Kombinationen aus Embedding-Modellen, Chunk-Gr\u00f6\u00dfen und Overlap-Verh\u00e4ltnissen getestet. Ziel war es, die Trefferquote (Hit Rate) sowie die Relevanz der abgerufenen Dokumente (Mean Reciprocal Rank, MRR) zu maximieren, w\u00e4hrend die Latenz in einem produktionsreifen Rahmen bleibt. Die Tests wurden auf einem standardisierten Validierungsset von 1.500 dom\u00e4nenspezifischen Fragen durchgef\u00fchrt. Die Ergebnisse verdeutlichen, dass gr\u00f6\u00dfere Chunk-Gr\u00f6\u00dfen zwar den Kontext verbessern, aber die Retrieval-Latenz signifikant erh\u00f6hen.",
+    "metadata": {
+      "enrichment_origins": {
+        "text": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ],
+        "text_as_html": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ]
+      },
+      "filename": "rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+      "filetype": "application/pdf",
+      "page_number": 1,
+      "text_as_html": "<div class=\"Page\" data-page-number=\"1\" /> <header class=\"Header\"><span class=\"UncategorizedText\">INTERNE TECHNISCHE DOKUMENTATION \u2014 RAG INGESTION PIPELINE</span><h1 class=\"Title\">Benchmark-Bericht: Retrieval-Performance & Infrastrukturkosten</h1></header> <section class=\"Section\" /> <p class=\"NarrativeText\"><span class=\"UncategorizedText\">Hinweis f\u00fcr das RAG-Parsing:</span><p class=\"Paragraph\">Dieses Dokument dient als synthetischer Testdatensatz zur Validierung von Tabellen-Extraktionsalgorithmen (z. B. Unstructured, LlamaParse) und LLM-basierten Tabellenbeschreibungen innerhalb der Daten-Ingestion-Pipeline.</p></p> <section class=\"Section\" /> <h2 class=\"Heading\">1. Evaluierung der Retrieval-Performance</h2> <p class=\"NarrativeText\">F\u00fcr die Optimierung unseres RAG-Systems (Retrieval-Augmented Generation) wurden verschiedene Kombinationen aus Embedding-Modellen, Chunk-Gr\u00f6\u00dfen und Overlap-Verh\u00e4ltnissen getestet. Ziel war es, die Trefferquote (Hit Rate) sowie die Relevanz der abgerufenen Dokumente (Mean Reciprocal Rank, MRR) zu maximieren, w\u00e4hrend die Latenz in einem produktionsreifen Rahmen bleibt.</p><p class=\"NarrativeText\">Die Tests wurden auf einem standardisierten Validierungsset von 1.500 dom\u00e4nenspezifischen Fragen durchgef\u00fchrt. Die Ergebnisse verdeutlichen, dass gr\u00f6\u00dfere Chunk-Gr\u00f6\u00dfen zwar den Kontext verbessern, aber die Retrieval-Latenz signifikant erh\u00f6hen.</p>",
+      "data_source": {
+        "url": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+        "record_locator": {
+          "protocol": "file",
+          "remote_file_path": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf"
+        }
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "4791cb9b2d1d0258c548fdf2eba63610",
+    "text": "Modell-ID / Name Chunk-Gr\u00f6\u00dfe Overlap (%) Hit Rate @5 MRR @5 Latenz (avg) text-embedding-3-small 256 Tokens 10% 0,78 0,68 42 ms text-embedding-3-small 512 Tokens 15% 0,82 0,71 48 ms text-embedding-3-large 512 Tokens 15% 0,89 0,79 74 ms bge-m3-dense-only 512 Tokens 20% 0,86 0,75 115 ms cohere-embed-multilingual-v3 512 Tokens 20% 0,92 0,84 61 ms cohere-embed-multilingual-v3 1024 Tokens 10% 0,91 0,81 95 ms",
+    "metadata": {
+      "page_number": 1,
+      "text_as_html": "<table><tr><td>Modell-ID / Name</td><td>Chunk-Gr\u00f6\u00dfe</td><td>Overlap (%)</td><td>Hit Rate @5</td><td>MRR @5</td><td>Latenz (avg)</td></tr><tr><td>text-embedding-3-small</td><td>256 Tokens</td><td>10%</td><td>0,78</td><td>0,68</td><td>42 ms</td></tr><tr><td>text-embedding-3-small</td><td>512 Tokens</td><td>15%</td><td>0,82</td><td>0,71</td><td>48 ms</td></tr><tr><td>text-embedding-3-large</td><td>512 Tokens</td><td>15%</td><td>0,89</td><td>0,79</td><td>74 ms</td></tr><tr><td>bge-m3-dense-only</td><td>512 Tokens</td><td>20%</td><td>0,86</td><td>0,75</td><td>115 ms</td></tr><tr><td><span>cohere-embed-multilingual-v3</span></td><td>512 Tokens</td><td>20%</td><td><span>0,92</span></td><td><span>0,84</span></td><td>61 ms</td></tr><tr><td>cohere-embed-multilingual-v3</td><td>1024 Tokens</td><td>10%</td><td>0,91</td><td>0,81</td><td>95 ms</td></tr></table>",
+      "filetype": "application/pdf",
+      "enrichment_origins": {
+        "text": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ],
+        "text_as_html": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ]
+      },
+      "partitioner_type": "vlm_partition",
+      "filename": "rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+      "data_source": {
+        "url": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+        "record_locator": {
+          "protocol": "file",
+          "remote_file_path": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf"
+        }
+      },
+      "table_description": "### **Summary of HTML Table: Embedding Model Performance Comparison**\n\nThis table compares the performance of different **text embedding models** based on **chunk size**, **overlap percentage**, **hit rate**, **MRR (Mean Reciprocal Rank)**, and **latency**.\n\n#### **Key Data Points:**\n1. **Best Overall Performance:**\n   - **`cohere-embed-multilingual-v3` (512 Tokens, 20% Overlap)**\n     - **Hit Rate @5:** **0.92** (highest)\n     - **MRR @5:** **0.84** (highest)\n     - **Latency:** **61 ms** (moderate)\n\n2. **Best Latency Efficiency:**\n   - **`text-embedding-3-small` (256 Tokens, 10% Overlap)**\n     - **Latency:** **42 ms** (lowest)\n     - **Hit Rate @5:** **0.78**\n     - **MRR @5:** **0.68**\n\n3. **Best Trade-off (Performance vs. Speed):**\n   - **`text-embedding-3-large` (512 Tokens, 15% Overlap)**\n     - **Hit Rate @5:** **0.89**\n     - **MRR @5:** **0.79**\n     - **Latency:** **74 ms** (reasonable)\n\n4. **Largest Chunk Size (1024 Tokens):**\n   - **`cohere-embed-multilingual-v3`**\n     - **Hit Rate @5:** **0.91**\n     - **MRR @5:** **0.81**\n     - **Latency:** **95 ms** (higher due to larger input)\n\n#### **Observations:**\n- **Larger chunk sizes (512/1024) generally improve hit rate and MRR** but increase latency.\n- **Higher overlap (15-20%) tends to boost performance** but may slow down processing.\n- **`cohere-embed-multilingual-v3` dominates in accuracy** but has moderate latency.\n- **`text-embedding-3-small` is the fastest** but less accurate.\n\nWould you like a deeper analysis of any specific model or metric?"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "fceb19304935eebdfd979793fdf054c1",
+    "text": "Wie in der obigen Tabelle ersichtlich, liefert das Modell cohere-embed-multilingual-v3 bei einer Chunk-Gr\u00f6\u00dfe von 512 Tokens und 20% Overlap das beste Verh\u00e4ltnis aus Genauigkeit (Hit Rate @5 = 0,92) und Latenz (61 ms). Die Erh\u00f6hung der Chunk-Gr\u00f6\u00dfe auf 1024 Tokens f\u00fchrte zu einem leichten Performance-Abfall, was auf eine Verw\u00e4sserung des Fokus im Vektorraum hindeutet.\n\n2. Infrastruktur-Skalierung und Vektordatenbanken\n\nNeben der reinen Retrieval-Qualit\u00e4t spielen die Betriebskosten und der Durchsatz (Queries per Second, QPS) eine entscheidende Rolle f\u00fcr den produktiven Rollout. Es wurden vier f\u00fchrende Vektordatenbank-Setups auf Basis einer gesch\u00e4tzten Ziel-Datenmenge von 10 Millionen Vektoren evaluiert.",
+    "metadata": {
+      "enrichment_origins": {
+        "text": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ],
+        "text_as_html": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ]
+      },
+      "filename": "rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+      "filetype": "application/pdf",
+      "page_number": 1,
+      "text_as_html": "<p class=\"NarrativeText\"><p class=\"Paragraph\">Wie in der obigen Tabelle ersichtlich, liefert das Modell</p><code class=\"InlineCode\">cohere-embed-multilingual-v3</code><p class=\"Paragraph\">bei einer Chunk-Gr\u00f6\u00dfe von 512 Tokens und 20% Overlap das beste Verh\u00e4ltnis aus Genauigkeit (Hit Rate @5 = 0,92) und Latenz (61 ms). Die Erh\u00f6hung der Chunk-Gr\u00f6\u00dfe auf 1024 Tokens f\u00fchrte zu einem leichten Performance-Abfall, was auf eine Verw\u00e4sserung des Fokus im Vektorraum hindeutet.</p></p> <div class=\"Page\" data-page-number=\"2\" /> <h2 class=\"Heading\">2. Infrastruktur-Skalierung und Vektordatenbanken</h2> <p class=\"NarrativeText\">Neben der reinen Retrieval-Qualit\u00e4t spielen die Betriebskosten und der Durchsatz (Queries per Second, QPS) eine entscheidende Rolle f\u00fcr den produktiven Rollout. Es wurden vier f\u00fchrende Vektordatenbank-Setups auf Basis einer gesch\u00e4tzten Ziel-Datenmenge von 10 Millionen Vektoren evaluiert.</p>",
+      "data_source": {
+        "url": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+        "record_locator": {
+          "protocol": "file",
+          "remote_file_path": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf"
+        }
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "32af6edb86641030429b24a1bb96bb40",
+    "text": "Vektor-DB Cluster-Konfiguration RAM / Node Max. Durchsatz Kosten / Monat Qdrant Cloud 2x AWS m6i.xlarge (Managed) 16 GB 450 QPS 480,00 \u20ac Pinecone Enterprise 3x S1 Pods (Replica Setup) 24 GB 600 QPS 820,00 \u20ac Milvus Distributed 4x QueryNodes + 2x ProxyNodes 32 GB 1.450 QPS 1.250,00 \u20ac pgvector (RDS) 1x db.r6g.2xlarge (Postgres 16) 64 GB 310 QPS 650,00 \u20ac",
+    "metadata": {
+      "page_number": 2,
+      "text_as_html": "<table><tr><td>Vektor-DB</td><td>Cluster-Konfiguration</td><td>RAM / Node</td><td>Max. Durchsatz</td><td>Kosten / Monat</td></tr><tr><td>Qdrant Cloud</td><td>2x AWS m6i.xlarge (Managed)</td><td>16 GB</td><td>450 QPS</td><td>480,00 \u20ac</td></tr><tr><td>Pinecone Enterprise</td><td>3x S1 Pods (Replica Setup)</td><td>24 GB</td><td>600 QPS</td><td>820,00 \u20ac</td></tr><tr><td>Milvus Distributed</td><td>4x QueryNodes + 2x ProxyNodes</td><td>32 GB</td><td>1.450 QPS</td><td>1.250,00 \u20ac</td></tr><tr><td>pgvector (RDS)</td><td>1x db.r6g.2xlarge (Postgres 16)</td><td>64 GB</td><td>310 QPS</td><td>650,00 \u20ac</td></tr></table>",
+      "filetype": "application/pdf",
+      "enrichment_origins": {
+        "text": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ],
+        "text_as_html": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ]
+      },
+      "partitioner_type": "vlm_partition",
+      "filename": "rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+      "data_source": {
+        "url": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+        "record_locator": {
+          "protocol": "file",
+          "remote_file_path": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf"
+        }
+      },
+      "table_description": "### **Summary of Vector Database Comparison Table**\n\nThis table compares **four vector databases** (Vektor-DB) based on **cluster configuration, RAM per node, maximum throughput (QPS), and monthly cost**.\n\n#### **Key Data Points:**\n1. **Milvus Distributed** offers the **highest throughput (1,450 QPS)** but at the **highest cost (\u20ac1,250/month)**.\n2. **Pinecone Enterprise** provides a **balance** with **600 QPS** for **\u20ac820/month**.\n3. **Qdrant Cloud** is the **most cost-effective** (\u20ac480/month) but has **lower performance (450 QPS)**.\n4. **pgvector (RDS)** has the **highest RAM (64 GB)** but the **lowest throughput (310 QPS)** for **\u20ac650/month**.\n\n#### **Key Insights:**\n- **Milvus** is best for **high-performance** needs despite higher costs.\n- **Pinecone** is a **mid-range** option with good scalability.\n- **Qdrant** is **budget-friendly** but less powerful.\n- **pgvector** is **RAM-heavy** but **slower** in query speed.\n\nWould you like a deeper analysis on any specific aspect?"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6f4b6e35b6473ffd8dbe1b4257cd0362",
+    "text": "Die Wahl der Vektordatenbank beeinflusst direkt die Systemarchitektur. W\u00e4hrend Milvus den h\u00f6chsten Durchsatz f\u00fcr parallele Nutzeranfragen bietet, stellt Qdrant Cloud die kosteneffizienteste Variante f\u00fcr das aktuelle Projektstadium dar. pgvector auf einer AWS RDS-Instanz ist eine starke Option, sofern eine strikte relationale Datenkonsistenz und eine vereinfachte Infrastruktur gefordert sind.\n\n3. Fazit f\u00fcr die Ingestion-Pipeline\n\nF\u00fcr die finale Pipeline-Architektur wird empfohlen, Tabellen vor dem Chunking explizit zu isolieren und \u00fcber ein separates LLM (z. B. GPT-4o-mini) textuell beschreiben zu lassen. Diese generierte Beschreibung (z. B. \u201eTabelle zeigt den Vergleich von Embedding-Modellen...\") sollte anschlie\u00dfend zusammen mit den Tabellen-Metadaten in den Vektorraum indexiert werden, um ein semantisches Auffinden komplexer Datenstrukturen zu garantieren.\n\nRAG Pipeline Engineering Team \u00a9 2026 \u2014 Vertrauliches Arbeitsdokument",
+    "metadata": {
+      "enrichment_origins": {
+        "text": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ],
+        "text_as_html": [
+          {
+            "type": "vlm_partition",
+            "provider": "anthropic",
+            "model": "claude-sonnet-4-5-20250929"
+          }
+        ]
+      },
+      "filename": "rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+      "filetype": "application/pdf",
+      "page_number": 2,
+      "text_as_html": "<p class=\"NarrativeText\">Die Wahl der Vektordatenbank beeinflusst direkt die Systemarchitektur. W\u00e4hrend Milvus den h\u00f6chsten Durchsatz f\u00fcr parallele Nutzeranfragen bietet, stellt Qdrant Cloud die kosteneffizienteste Variante f\u00fcr das aktuelle Projektstadium dar. pgvector auf einer AWS RDS-Instanz ist eine starke Option, sofern eine strikte relationale Datenkonsistenz und eine vereinfachte Infrastruktur gefordert sind.</p> <h2 class=\"Heading\">3. Fazit f\u00fcr die Ingestion-Pipeline</h2> <p class=\"NarrativeText\">F\u00fcr die finale Pipeline-Architektur wird empfohlen, Tabellen vor dem Chunking explizit zu isolieren und \u00fcber ein separates LLM (z. B. GPT-4o-mini) textuell beschreiben zu lassen. Diese generierte Beschreibung (z. B. \u201eTabelle zeigt den Vergleich von Embedding-Modellen...\") sollte anschlie\u00dfend zusammen mit den Tabellen-Metadaten in den Vektorraum indexiert werden, um ein semantisches Auffinden komplexer Datenstrukturen zu garantieren.</p> <footer class=\"Footer\"><p class=\"NarrativeText\">RAG Pipeline Engineering Team \u00a9 2026 \u2014 Vertrauliches Arbeitsdokument</p></footer>",
+      "data_source": {
+        "url": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf",
+        "record_locator": {
+          "protocol": "file",
+          "remote_file_path": "file:///home/etl/node/downloads/00000000-0000-0000-0000-000000000001/c83bfafe-rag_testdokument_tabellen-Kopie-7b4129d9.pdf"
+        }
+      }
+    }
+  }
+]

@@ -105,7 +105,7 @@ def _remove_image_base64_inplace(elements: list[dict]) -> None:
             metadata.pop("image_base64", None)
 
 
-def download_outputs(client: UnstructuredClient, job_id: str, input_file_ids: list[str]) -> str:
+def download_outputs(client: UnstructuredClient, job_id: str, input_file_ids: list[str]) -> list[dict]:
     for file_id in input_file_ids:
         print(f"Downloading processed output for file_id: {file_id}")
         response = client.jobs.download_job_output(
@@ -122,14 +122,14 @@ def download_outputs(client: UnstructuredClient, job_id: str, input_file_ids: li
             _remove_image_base64_inplace(payload)
 
         if payload is not None:
-            return json.dumps(payload, indent=2)
+            return payload
         else:
             raise RuntimeError(f"Failed to extract JSON content for file_id {file_id}")
 
     raise RuntimeError("No output payload was returned for the provided input file IDs.")
 
 
-def ingest(content: bytes, file_name: str, content_type: str = "application/pdf") -> str:
+def ingest(content: bytes, file_name: str, content_type: str = "application/pdf") -> list[dict]:
     api_key = os.getenv("UNSTRUCTURED_API_KEY")
     if not api_key:
         raise RuntimeError("UNSTRUCTURED_API_KEY is not set.")
