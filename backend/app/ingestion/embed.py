@@ -1,7 +1,6 @@
-from mistralai import Mistral
-import os
+import app.utils.get_mistral_client as get_mistral
 
-client = Mistral(api_key=os.getenv("MISTRAL_API_KEY"))
+client = get_mistral.get_mistral_client()
 
 def get_embedding(text: str) -> list[float]:
     response = client.embeddings.create(model="mistral-embed", inputs=[text])
