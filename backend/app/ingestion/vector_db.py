@@ -40,19 +40,19 @@ def query_points(user_query: str, filters: list[qm.FieldCondition] = None) -> li
                 query=embed.get_embedding(user_query),
                 using=DENSE_VECTOR_NAME,
                 filter=search_filter,
-                limit=10,
+                limit=20,
             ),
             qm.Prefetch(
                 query=bm25_document(user_query),
                 using=SPARSE_VECTOR_NAME,
                 filter=search_filter,
-                limit=10,
+                limit=20,
             ),
         ],
         query=qm.FusionQuery(fusion=qm.Fusion.RRF),
         query_filter=search_filter,
         with_payload=True,
-        limit=5,
+        limit=20,
     ).points
 
     parsed_hits: list[dict] = []

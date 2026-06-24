@@ -2,12 +2,13 @@ import os
 from typing import Optional
 
 from fastapi import FastAPI, Form, UploadFile
-from fastapi.exceptions import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from qdrant_client.http import models as qm
 from app.ingestion.vector_db import ensure_collection, query_points, insert_points
 from app.ingestion.ingest import ingest
+from app.generator.rerank import rerank_hits
+from app.generator.generate import generate_answer
 
 
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
@@ -113,6 +114,7 @@ def chat(req: ChatRequest) -> ChatResponse:
         )
 
     hits = query_points(req.message, filters)
+    hits = rerank_hits(req.message, hits, top_k=5)
 
     if not hits:
         return ChatResponse(
@@ -120,14 +122,9 @@ def chat(req: ChatRequest) -> ChatResponse:
             sources=[],
         )
 
-    snippets: list[str] = []
     sources: list[dict] = []
 
     for hit in hits:
-        snippet = str(hit.get("content", "")).strip()
-        if snippet:
-            snippets.append(snippet)
-
         sources.append(
             {
                 "score": hit.get("score"),
@@ -138,13 +135,6 @@ def chat(req: ChatRequest) -> ChatResponse:
             }
         )
 
-    context_block = "\n\n".join(f"[{i + 1}] {s}" for i, s in enumerate(snippets[:3]))
-    answer = (
-        "Quick PoC answer generated from retrieved Qdrant context. "
-        "Replace this with your LLM call later.\n\n"
-        f"User question: {req.message}\n\n"
-        "Retrieved context:\n"
-        f"{context_block}"
-    )
+    answer = generate_answer(req.message, hits)
 
     return ChatResponse(answer=answer, sources=sources)
