@@ -124,17 +124,17 @@ def chat(req: ChatRequest) -> ChatResponse:
     sources: list[dict] = []
 
     for hit in hits:
-        payload = hit.payload or {}
-        snippet = str(payload.get("text", "")).strip()
+        snippet = str(hit.get("content", "")).strip()
         if snippet:
             snippets.append(snippet)
 
         sources.append(
             {
-                "score": hit.score,
-                "resource_id": payload.get("resource_id"),
-                "title": payload.get("title"),
-                "chunk_index": payload.get("chunk_index"),
+                "score": hit.get("score"),
+                "resource_id": hit.get("resource_id"),
+                "title": hit.get("title"),
+                "chunk_index": hit.get("chunk_index"),
+                "element_type": hit.get("element_type"),
             }
         )
 

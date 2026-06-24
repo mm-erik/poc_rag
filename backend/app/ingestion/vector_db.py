@@ -14,9 +14,26 @@ BM25_LANGUAGE = os.getenv("BM25_LANGUAGE", "english")
 
 qdrant = QdrantClient(url=QDRANT_URL)
 
+
+def _extract_retrieval_content(payload: dict) -> str:
+    element_type = payload.get("element_type", "")
+
+    if element_type == "Image":
+        return str(payload.get("image_description") or payload.get("text") or "").strip()
+
+    if element_type == "Table":
+        table_html = str(payload.get("table_as_html") or "").strip()
+        table_description = str(payload.get("table_description") or "").strip()
+        if table_html and table_description:
+            return f"Table HTML:\n{table_html}\n\nTable Description:\n{table_description}"
+        return table_description or table_html or str(payload.get("text") or "").strip()
+
+    return str(payload.get("text") or "").strip()
+
+
 def query_points(user_query: str, filters: list[qm.FieldCondition] = None) -> list[dict]:
     search_filter = qm.Filter(must=filters) if filters else None
-    return qdrant.query_points(
+    points = qdrant.query_points(
         collection_name=QDRANT_COLLECTION,
         prefetch=[
             qm.Prefetch(
@@ -37,6 +54,22 @@ def query_points(user_query: str, filters: list[qm.FieldCondition] = None) -> li
         with_payload=True,
         limit=5,
     ).points
+
+    parsed_hits: list[dict] = []
+    for point in points:
+        payload = point.payload or {}
+        parsed_hits.append(
+            {
+                "score": point.score,
+                "resource_id": payload.get("resource_id"),
+                "title": payload.get("title"),
+                "chunk_index": payload.get("chunk_index"),
+                "element_type": payload.get("element_type"),
+                "content": _extract_retrieval_content(payload),
+            }
+        )
+
+    return parsed_hits
 
 def ensure_collection() -> None:
     try:
@@ -77,8 +110,6 @@ def insert_points(chunks: list[dict], userId: str, title: str) -> tuple[str, int
         else:
             embedding_source = chunk.get("text", "")
 
-        print(f"Embedding source for chunk {idx} [{chunk_type}]: {embedding_source[:100]}...")
-
         points.append(
             qm.PointStruct(
                 id=str(uuid4()),
@@ -92,7 +123,11 @@ def insert_points(chunks: list[dict], userId: str, title: str) -> tuple[str, int
                     "resource_id": resource_id,
                     "title": title,
                     "chunk_index": idx,
+                    "element_type": chunk_type,
                     "text": chunk.get("text", ""),
+                    "image_description": metadata.get("image_description"),
+                    "table_description": metadata.get("table_description"),
+                    "table_as_html": metadata.get("text_as_html"),
                 },
             )
         )
