@@ -3,14 +3,13 @@ from qdrant_client.http import models as qm
 import os
 import app.ingestion.embed as embed
 from uuid import uuid4
+import app.utils.bm25 as bm25
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "rag_poc")
 VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", "1024"))
 DENSE_VECTOR_NAME = os.getenv("DENSE_VECTOR_NAME", "text")
 SPARSE_VECTOR_NAME = os.getenv("SPARSE_VECTOR_NAME", "sparse-text")
-BM25_MODEL = os.getenv("BM25_MODEL", "Qdrant/bm25")
-BM25_LANGUAGE = os.getenv("BM25_LANGUAGE", "english")
 
 qdrant = QdrantClient(url=QDRANT_URL)
 
@@ -43,7 +42,7 @@ def query_points(user_query: str, filters: list[qm.FieldCondition] = None) -> li
                 limit=20,
             ),
             qm.Prefetch(
-                query=bm25_document(user_query),
+                query=bm25.bm25_document(user_query),
                 using=SPARSE_VECTOR_NAME,
                 filter=search_filter,
                 limit=20,
@@ -88,13 +87,6 @@ def ensure_collection() -> None:
             },
         )
 
-def bm25_document(text: str) -> qm.Document:
-    return qm.Document(
-        text=text,
-        model=BM25_MODEL,
-        options={"language": BM25_LANGUAGE},
-    )
-
 
 def insert_points(chunks: list[dict], userId: str, title: str) -> tuple[str, int]:
     points: list[qm.PointStruct] = []
@@ -115,7 +107,7 @@ def insert_points(chunks: list[dict], userId: str, title: str) -> tuple[str, int
                 id=str(uuid4()),
                 vector={
                     DENSE_VECTOR_NAME: embed.get_embedding(embedding_source),
-                    SPARSE_VECTOR_NAME: bm25_document(embedding_source),
+                    SPARSE_VECTOR_NAME: bm25.bm25_document(embedding_source),
                 },
                 payload={
                     "user_id": userId,
