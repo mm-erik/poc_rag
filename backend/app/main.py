@@ -5,10 +5,11 @@ from fastapi import FastAPI, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from qdrant_client.http import models as qm
-from app.ingestion.vector_db import ensure_collection, query_points, insert_points
+from app.ingestion.vector_db import ensure_collection, insert_points
 from app.ingestion.ingest import ingest
 from app.generator.rerank import rerank_hits
 from app.generator.generate import generate_answer
+from app.chat.retrieval import query_points
 
 
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
