@@ -8,6 +8,19 @@ services:
     volumes:
       - qdrant_storage:/qdrant/storage
 
+  postgres:
+    image: postgres:16-alpine
+    container_name: rag-poc-postgres
+    environment:
+      POSTGRES_USER: raguser
+      POSTGRES_PASSWORD: ragpassword
+      POSTGRES_DB: ragdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -60,26 +73,8 @@ services:
       - ./frontend:/app
       - /app/node_modules   # keep container's installed modules, ignore host's
 
-  # ---------- public tunnels (PoC only) ----------
-  # URLs are printed to the container logs; retrieve them with:
-  #   docker compose logs tunnel-qdrant
-  #   docker compose logs tunnel-minio
-  tunnel-qdrant:
-    image: cloudflare/cloudflared:latest
-    container_name: rag-poc-tunnel-qdrant
-    command: tunnel --no-autoupdate --url http://qdrant:6333
-    depends_on:
-      - qdrant
-    restart: unless-stopped
-
-  tunnel-minio:
-    image: cloudflare/cloudflared:latest
-    container_name: rag-poc-tunnel-minio
-    command: tunnel --no-autoupdate --url http://minio:9001
-    depends_on:
-      - minio
-    restart: unless-stopped
 
 volumes:
   qdrant_storage:
   minio_data:
+  postgres_data:
