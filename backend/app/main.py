@@ -10,6 +10,7 @@ from app.ingestion.ingest import ingest
 from app.generator.rerank import rerank_hits
 from app.generator.generate import generate_answer
 from app.chat.retrieval import query_points
+from app.chat.memory import init_db, save_message
 
 
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "500"))
@@ -34,6 +35,7 @@ class UploadResponse(BaseModel):
 
 class ChatRequest(BaseModel):
     userId: str = Field(..., min_length=1)
+    sessionId: str = Field(..., min_length=1)
     message: str = Field(..., min_length=1)
     filterResourceIds: Optional[list[str]] = None
 
@@ -58,6 +60,7 @@ app.add_middleware(
 @app.on_event("startup")
 def startup() -> None:
     ensure_collection()
+    init_db()
 
 
 @app.get("/")
@@ -101,6 +104,12 @@ async def upload_resource(
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest) -> ChatResponse:
     ensure_collection()
+    save_message(
+        session_id=req.sessionId,
+        user_id=req.userId,
+        role="user",
+        content=req.message,
+    )
 
     filters = [
         qm.FieldCondition(key="user_id", match=qm.MatchValue(value=req.userId)),
@@ -118,8 +127,15 @@ def chat(req: ChatRequest) -> ChatResponse:
     hits = rerank_hits(req.message, hits, top_k=5)
 
     if not hits:
+        fallback_answer = "I could not find relevant context for your tenant. Upload resources first."
+        save_message(
+            session_id=req.sessionId,
+            user_id=req.userId,
+            role="assistant",
+            content=fallback_answer,
+        )
         return ChatResponse(
-            answer="I could not find relevant context for your tenant. Upload resources first.",
+            answer=fallback_answer,
             sources=[],
         )
 
@@ -137,5 +153,11 @@ def chat(req: ChatRequest) -> ChatResponse:
         )
 
     answer = generate_answer(req.message, hits)
+    save_message(
+        session_id=req.sessionId,
+        user_id=req.userId,
+        role="assistant",
+        content=answer,
+    )
 
     return ChatResponse(answer=answer, sources=sources)

@@ -21,6 +21,20 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: rag-poc-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ragpoc.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+    restart: unless-stopped
+
   minio:
     image: minio/minio:latest
     container_name: minio
@@ -55,8 +69,10 @@ services:
       CHUNK_OVERLAP: 80
       CORS_ALLOW_ORIGINS: "*"
       MISTRAL_EMBED_MODEL: mistral-embed
+      DATABASE_URL: postgresql+psycopg://raguser:ragpassword@postgres:5432/ragdb
     depends_on:
       - qdrant
+      - postgres
     ports:
       - "8000:8000"
 
