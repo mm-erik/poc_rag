@@ -44,9 +44,13 @@ def describe_image(image_base64: str, mime_type: str = "image/jpeg") -> str:
                     {
                         "type": "text",
                         "text": (
-                            "Describe the content of this image concisely. "
-                            "Focus on the key information it conveys. "
-                            "Write the description in German."
+                            "Describe the content of this image concisely in German. "
+                            "Focus on the key information it conveys.\n\n"
+                            
+                            "CRITICAL: Start your response directly with the description text. "
+                            "Do NOT include any titles, introductory phrases, preambles, or headers "
+                            "such as 'Beschreibung des Bildes:', 'Bildbeschreibung:', or '**Beschreibung des Bildes**:'. "
+                            "Output only the pure description text and nothing else."
                         ),
                     },
                 ],
@@ -64,9 +68,15 @@ def describe_table(text_as_html: str) -> str:
             {
                 "role": "user",
                 "content": (
-                    "Summarize the following HTML table concisely. "
-                    "Describe what it shows and highlight the key data points:\n\n"
-                    + text_as_html + ". Write the summary in German."
+                    "Summarize the following HTML table concisely in German. "
+                    "Describe what it shows and highlight the key data points.\n\n"
+                    
+                    "CRITICAL: Start your response directly with the summary text. "
+                    "Do NOT include any titles, introductory phrases, preambles, or headers "
+                    "such as 'Beschreibung der Tabelle:' or '**Beschreibung der Tabelle**:'. "
+                    "Output only the pure description text and nothing else.\n\n"
+                    
+                    f"Table HTML:\n{text_as_html}"
                 ),
             }
         ],
