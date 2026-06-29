@@ -152,7 +152,7 @@ def chat(req: ChatRequest) -> ChatResponse:
             }
         )
 
-    answer = generate_answer(req.message, hits)
+    answer = generate_answer(req.message, hits, req.userId)
     save_message(
         session_id=req.sessionId,
         user_id=req.userId,

@@ -1,6 +1,7 @@
 import os
 
 import app.utils.get_mistral_client as get_mistral
+import app.chat.memory as memory
 
 client = get_mistral.get_mistral_client()
 
@@ -21,7 +22,8 @@ def _extract_text_content(message_content) -> str:
 	return ""
 
 
-def generate_answer(user_query: str, hits: list[dict]) -> str:
+def generate_answer(user_query: str, hits: list[dict], user_id: str) -> str:
+	chat_history = memory.get_last_messages(user_id=user_id)
 	context_lines: list[str] = []
 	for idx, hit in enumerate(hits[:5]):
 		context = str(hit.get("content", "")).strip()
@@ -41,6 +43,7 @@ def generate_answer(user_query: str, hits: list[dict]) -> str:
 		"Schreibe in ganzen, fließenden Sätzen ohne Listen oder Textdekorationen. Verzichte auf JEDE Textdekoration, wie z. B. Sternchen, Emojis oder Hervorhebungen. "
 		"Gib als Ausgabe ausschließlich reinen Fließtext ohne Überschrift und ohne Präfix wie 'Antwort:'. "
 		"Wenn mehrere Kontextabschnitte relevant sind, verbinde sie zu einer logischen Antwort."
+		f"Beziehe auch die vergangene Konversation ein. Vergangene Konversation: {chat_history}"
 	)
 
 	user_prompt = (

@@ -47,3 +47,22 @@ def save_message(session_id: str, user_id: str, role: str, content: str) -> None
             )
         )
         db.commit()
+
+def get_last_messages(user_id: str) -> list[dict]:
+    with SessionLocal() as db:
+        latest_messages = (
+            db.query(ChatMessage)
+            .filter(ChatMessage.user_id == user_id)
+            .order_by(ChatMessage.created_at.desc())
+            .limit(10)
+            .all()
+        )
+    latest_messages = list(reversed(latest_messages))
+
+    return [
+        {
+            "role": message.role,
+            "content": message.content,
+        }
+        for message in latest_messages
+    ]
